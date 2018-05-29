@@ -76,9 +76,12 @@ def main():
             s.sendto(buff.encode(), object_addr) 
             try:
                 data, (addr, port) = s.recvfrom(1024)
-            except Exception as e:
+            except socket.timeout as e:
                 log_str = "Request timeout for icmp_seq %d"%count
                 time_out = True
+            except KeyboardInterrupt:
+                print("\n-----------------------------------------" )
+                exit(0)
             recent_time = time.time()
             time_diff = recent_time - start_time
             time_line = recent_time - last_second
@@ -109,6 +112,9 @@ def main():
                 total_msg += data.decode()
             except socket.timeout as e:
                 pass
+            except KeyboardInterrupt:
+                print("\n-----------------------------------------" )
+                exit(0)
     s.close()
 
 
