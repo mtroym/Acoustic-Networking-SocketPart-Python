@@ -68,8 +68,8 @@ def main():
             # if (time_diff > 1 and int(time_diff * 1000) % 1000 == 0):
             s.sendto(f.readline(), object_addr) 
                 # start_time += 1
-    #             data, (addr, port) = s.recvfrom(1024)
-    #             msg = data.decode('utf-8')
+            data, (addr, port) = s.recvfrom(1024)
+            print("object said:" + data.decode('utf-8'))
     #             print( my_addr_str + ' : ' + msg)
         else:
             data, (addr, port) = s.recvfrom(1024)
@@ -78,12 +78,12 @@ def main():
                 fout = open(opts.output, 'w')
                 fout.write(total_msg)
                 break;
-            payload_len = len(data)*8
+            payload_len = len(data)
             info = 'payload:' + str(payload_len) +' Bytes'
             other_addr =  '[' + str(addr)+':'+str(port) + ']'
             print(other_addr + ' : ' + info )
             total_msg += data
-            # s.sendto(b'got one!', (addr, port))
+            s.sendto(b'got one!', (addr, port))
     s.close()
 
 
