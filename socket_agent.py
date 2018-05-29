@@ -71,20 +71,20 @@ def main():
             start_time = time.time()
             s.sendto(buff.encode(), object_addr) 
             data, (addr, port) = s.recvfrom(1024)
-            time_diff = time.time() - start_time
-            
-
-            time_line = time.time() - last_second
-            if (time_line > opts.interval and int(time_line * 1000) % 1000 == 0):
+            recent_time = time.time()
+            time_diff = recent_time - start_time
+            time_line = recent_time - last_second
+            if (time_line > opts.interval):
                 log_str = "%d bytess"%len(data.decode()) +" from %s: %d "%(addr,port) \
                     + "seq_num=%d "%count + "time=%0.4f"%(time_diff * 1000) + "ms"                
                 print(log_str)
-                last_second -= opts.interval
+                last_second = recent_time
                 count += 1
             # print("object said:" + data.decode('utf-8'))
     #             print( my_addr_str + ' : ' + msg)
         else:
             data, (addr, port) = s.recvfrom(1024)
+            s.sendto(b'byte'*16, (addr, port))
             if (data.decode() == "END"):
                 print(other_addr + ' : EOF')
                 fout = open(opts.output, 'w')
@@ -95,7 +95,6 @@ def main():
             other_addr =  '[' + str(addr)+':'+str(port) + ']'
             print(other_addr + ' : ' + info )
             total_msg += data.decode()
-            s.sendto(b'byte'*16, (addr, port))
     s.close()
 
 
