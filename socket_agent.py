@@ -49,6 +49,7 @@ while 1:
         time_diff = time.time() - start_time
         if (count >= 10.0):
             s.sendto("END", object_addr)
+            print("=> the send progress is end")
             break;
         if (time_diff > 1 and int(time_diff * 1000) % 1000 == 0):
             s.sendto(payload, object_addr)
