@@ -6,6 +6,7 @@ import argparse
 def parse():
     parser = argparse.ArgumentParser()
     parser.add_argument('--sender', default=False, type=str2bool, help='the agent type')
+    parser.add_argument('--verbose', default=False, type=str2bool, help='ask you if print log out')
     parser.add_argument('--endless', default=False, type=str2bool, help='if we transfer one file and recv an EOF, we done if not endless')
     parser.add_argument('--interval', default=0, type=int, help='verbose interval time')
     parser.add_argument('--ping', default=False, type=str2bool, help='ping?')
@@ -83,8 +84,8 @@ def main():
             time_line = recent_time - last_second
             if (time_line > opts.interval):
                 if (not time_out):
-                    log_str = "%d bytess"%len(data.decode()) +" from %s: %d "%(addr,port) \
-                        + "icmp_seq=%d "%count + "time=%0.4f"%(time_diff * 1000) + "ms"                
+                    log_str = "%d bytess"%len(data.decode()) +" from %s:%d "%(addr,port) \
+                        + "icmp_seq=%d "%count + "time=%0.3f "%(time_diff * 1000) + "ms"                
                 print(log_str)
                 last_second = recent_time
                 time_out = False
@@ -92,18 +93,22 @@ def main():
             # print("object said:" + data.decode('utf-8'))
     #             print( my_addr_str + ' : ' + msg)
         else:
-            data, (addr, port) = s.recvfrom(1024)
-            s.sendto(b'byte'*16, (addr, port))
-            if (data.decode() == "END"):
-                print(other_addr + ' : EOF')
-                fout = open(opts.output, 'w')
-                fout.write(total_msg)
-                if (not opts.endless):
-                    break
-            payload_len = len(data)
-            other_addr =  '[' + str(addr)+':'+str(port) + ']'
-            print(other_addr + ' : ' + data.decode('utf-8') )
-            total_msg += data.decode()
+            try:
+                data, (addr, port) = s.recvfrom(1024)
+                s.sendto(b'byte'*16, (addr, port))
+                if (data.decode() == "END"):
+                    print(other_addr + ' : EOF')
+                    fout = open(opts.output, 'w')
+                    fout.write(total_msg)
+                    if (not opts.endless):
+                        break
+                payload_len = len(data)
+                other_addr =  '[' + str(addr)+':'+str(port) + ']'
+                if (opts.verbose):
+                    print(other_addr + ' : ' + data.decode('utf-8') )
+                total_msg += data.decode()
+            except socket.timeout as e:
+                pass
     s.close()
 
 
