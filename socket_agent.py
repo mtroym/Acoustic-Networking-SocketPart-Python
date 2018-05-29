@@ -48,6 +48,7 @@ while 1:
     if sender :
         time_diff = time.time() - start_time
         if (count >= 10.0):
+            s.sendto("END", object_addr)
             break;
         if (time_diff > 1 and int(time_diff * 1000) % 1000 == 0):
             s.sendto(payload, object_addr)
@@ -55,12 +56,15 @@ while 1:
             count += 1
 #             data, (addr, port) = s.recvfrom(1024)
 #             msg = data.decode('utf-8')
-#             print( my_addr_str + '->'+object_addr_str+' : ' + msg)
+#             print( my_addr_str + ' : ' + msg)
     else:
         data, (addr, port) = s.recvfrom(1024)
+        if (data == "END"):
+            print(other_addr + ' : EOF')
+            break;
         payload_len = len(data)*8
         info = 'payload:' + str(payload_len) +' Bytes'
         other_addr =  '[' + str(addr)+':'+str(port) + ']'
-        print(my_addr_str + '->' + other_addr + ' : ' + info ) 
-        s.sendto(b'got one!', (addr, port))
+        print(other_addr + ' : ' + info ) 
+        # s.sendto(b'got one!', (addr, port))
 s.close()
