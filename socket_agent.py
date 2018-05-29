@@ -65,11 +65,14 @@ def main():
             # if (time_diff > 1 and int(time_diff * 1000) % 1000 == 0):
             start_time = time.time()
             s.sendto(buff.encode(), object_addr) 
-                # start_time += 1
             data, (addr, port) = s.recvfrom(1024)
             time_diff = time.time() - start_time
-            print("%d bytes"%len(data.decode()) +" from %s:%d "%(addr,port) + "time=%0.4f"%(time_diff * 1000) + "ms")
-            print("object said:" + data.decode('utf-8'))
+            log_str = "%d bytess"%len(data.decode()) +" from %s: %d "%(addr,port) \
+                        + "seq_num=%d "%count + "time=%0.4f"%(time_diff * 1000) + "ms"
+            print(log_str)
+            count += 1
+
+            # print("object said:" + data.decode('utf-8'))
     #             print( my_addr_str + ' : ' + msg)
         else:
             data, (addr, port) = s.recvfrom(1024)
