@@ -45,6 +45,7 @@ def main():
     object_addr_str = '[' + object_addr[0] + ":"+ str(object_addr[1]) + ']'
     # ** local setting
     s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+    s.settimeout(1)
     my_IP = socket.gethostbyname(socket.gethostname())
     my_port = opts.port0
     my_addr = (my_IP, my_port)
@@ -59,6 +60,7 @@ def main():
     total_msg = ""
     count = 0;
     last_second = time.time()
+    time_out = False
     ##########################################
     while 1:
         if sender :
@@ -71,15 +73,21 @@ def main():
 
             start_time = time.time()
             s.sendto(buff.encode(), object_addr) 
-            data, (addr, port) = s.recvfrom(1024)
+            try:
+                data, (addr, port) = s.recvfrom(1024)
+            except Exception as e:
+                log_str = "Request timeout for icmp_seq %d"%count
+                time_out = True
             recent_time = time.time()
             time_diff = recent_time - start_time
             time_line = recent_time - last_second
             if (time_line > opts.interval):
-                log_str = "%d bytess"%len(data.decode()) +" from %s: %d "%(addr,port) \
-                    + "seq_num=%d "%count + "time=%0.4f"%(time_diff * 1000) + "ms"                
+                if (not time_out):
+                    log_str = "%d bytess"%len(data.decode()) +" from %s: %d "%(addr,port) \
+                        + "icmp_seq=%d "%count + "time=%0.4f"%(time_diff * 1000) + "ms"                
                 print(log_str)
                 last_second = recent_time
+                time_out = False
                 count += 1
             # print("object said:" + data.decode('utf-8'))
     #             print( my_addr_str + ' : ' + msg)
