@@ -6,6 +6,7 @@ import argparse
 def parse():
     parser = argparse.ArgumentParser()
     parser.add_argument('--sender', default=False, type=str2bool, help='the agent type')
+    parser.add_argument('--setup', default=False, type=str2bool, help='setup')
     parser.add_argument('--address', default='127.0.0.1', type=str, help='ip address')
     parser.add_argument('--port1', default=9999, type=int, help='object port')
     parser.add_argument('--port0', default=9999, type=int, help='my port')
@@ -39,6 +40,8 @@ my_addr_str = '['+ str(my_IP) +':'+str(my_port)+']'
 
 s.bind((my_IP, my_port))
 print("set the address at" + my_addr_str)
+if (setup):
+    exit(0)
 ##########################################
 payload = "1234567890" * 10
 start_time = time.time()
