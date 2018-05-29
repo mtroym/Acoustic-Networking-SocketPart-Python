@@ -50,7 +50,7 @@ def main():
         exit(0)
     ##########################################
     f = open(opts.input, 'r')
-    content = f.read(-1)
+    content = f.readline()
     start_time = time.time()
     total_msg = ""
     count = 0;
@@ -58,14 +58,16 @@ def main():
     while 1:
         if sender :
             time_diff = time.time() - start_time
-            if (count >= 10.0):
+
+            buff = f.readline()
+            print(buff == "")
+            if (buff == ""):
                 s.sendto("END", object_addr)
                 print("=> the send progress is end")
                 break;
-            if (time_diff > 1 and int(time_diff * 1000) % 1000 == 0):
-                s.sendto(content, object_addr)
-                start_time += 1
-                count += 1
+            # if (time_diff > 1 and int(time_diff * 1000) % 1000 == 0):
+            s.sendto(f.readline(), object_addr) 
+                # start_time += 1
     #             data, (addr, port) = s.recvfrom(1024)
     #             msg = data.decode('utf-8')
     #             print( my_addr_str + ' : ' + msg)
