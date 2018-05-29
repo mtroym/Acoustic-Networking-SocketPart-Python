@@ -6,6 +6,7 @@ import argparse
 def parse():
     parser = argparse.ArgumentParser()
     parser.add_argument('--sender', default=False, type=str2bool, help='the agent type')
+    parser.add_argument('--endless', default=False, type=str2bool, help='if we transfer one file and recv an EOF, we done if not endless')
     parser.add_argument('--interval', default=0, type=int, help='verbose interval time')
     parser.add_argument('--ping', default=False, type=str2bool, help='ping?')
     parser.add_argument('--input', default="file/INPUT.txt", type=str, help='the input file')
@@ -62,7 +63,7 @@ def main():
     while 1:
         if sender :
             
-            buff = "xxx" if opts.ping else f.readline()
+            buff = "0" if opts.ping else f.readline()
             if (buff == ""):
                 s.sendto("END".encode(), object_addr)
                 print("=> the send progress is end")
@@ -89,11 +90,11 @@ def main():
                 print(other_addr + ' : EOF')
                 fout = open(opts.output, 'w')
                 fout.write(total_msg)
-                break;
+                if (not opts.endless):
+                    break
             payload_len = len(data)
-            info = 'payload:' + str(payload_len) +' Bytes'
             other_addr =  '[' + str(addr)+':'+str(port) + ']'
-            print(other_addr + ' : ' + info )
+            print(other_addr + ' : ' + data.decode('utf-8') )
             total_msg += data.decode()
     s.close()
 
