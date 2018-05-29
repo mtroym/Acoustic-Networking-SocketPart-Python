@@ -50,26 +50,25 @@ def main():
         exit(0)
     ##########################################
     f = open(opts.input, 'r')
-    content = f.readline()
     start_time = time.time()
     total_msg = ""
     count = 0;
     ##########################################
     while 1:
         if sender :
-            time_diff = time.time() - start_time
+            # time_diff = time.time() - start_time
 
             buff = f.readline()
-            print(buff == "")
+            print(buff)
             if (buff == ""):
-                s.sendto("END", object_addr)
+                s.sendto("END".encode(), object_addr)
                 print("=> the send progress is end")
                 break;
             # if (time_diff > 1 and int(time_diff * 1000) % 1000 == 0):
-            s.sendto(f.readline(), object_addr) 
+            s.sendto(buff.encode(), object_addr) 
                 # start_time += 1
-            data, (addr, port) = s.recvfrom(1024)
-            print("object said:" + data.decode('utf-8'))
+            # data, (addr, port) = s.recvfrom(1024)
+            # print("object said:" + data.decode('utf-8'))
     #             print( my_addr_str + ' : ' + msg)
         else:
             data, (addr, port) = s.recvfrom(1024)
@@ -82,8 +81,8 @@ def main():
             info = 'payload:' + str(payload_len) +' Bytes'
             other_addr =  '[' + str(addr)+':'+str(port) + ']'
             print(other_addr + ' : ' + info )
-            total_msg += data
-            s.sendto(b'got one!', (addr, port))
+            total_msg += data.decode()
+            # s.sendto(b'got one!', (addr, port))
     s.close()
 
 
