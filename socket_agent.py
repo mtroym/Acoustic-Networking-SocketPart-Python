@@ -40,7 +40,7 @@ my_addr_str = '['+ str(my_IP) +':'+str(my_port)+']'
 
 s.bind((my_IP, my_port))
 print("set the address at" + my_addr_str)
-if (setup):
+if (opts.setup):
     exit(0)
 ##########################################
 payload = "1234567890" * 10
