@@ -6,6 +6,8 @@ import argparse
 def parse():
     parser = argparse.ArgumentParser()
     parser.add_argument('--sender', default=False, type=str2bool, help='the agent type')
+    parser.add_argument('--interval', default=0, type=int, help='verbose interval time')
+    parser.add_argument('--ping', default=False, type=str2bool, help='ping?')
     parser.add_argument('--input', default="file/INPUT.txt", type=str, help='the input file')
     parser.add_argument('--output', default="inter/OUTPUT.txt", type=str, help='the output file')
     parser.add_argument('--setup', default=False, type=str2bool, help='setup')
@@ -13,6 +15,9 @@ def parse():
     parser.add_argument('--port1', default=9999, type=int, help='object port')
     parser.add_argument('--port0', default=9999, type=int, help='my port')
     opt = parser.parse_args()
+
+    if (opt.ping):
+        opt.interval = 1
     return opt
 
 def str2bool(v):
@@ -52,26 +57,30 @@ def main():
     f = open(opts.input, 'r')
     total_msg = ""
     count = 0;
+    last_second = time.time()
     ##########################################
     while 1:
         if sender :
-            # time_diff = time.time() - start_time
-
-            buff = f.readline()
+            
+            buff = "xxx" if opts.ping else f.readline()
             if (buff == ""):
                 s.sendto("END".encode(), object_addr)
                 print("=> the send progress is end")
                 break;
-            # if (time_diff > 1 and int(time_diff * 1000) % 1000 == 0):
+
             start_time = time.time()
             s.sendto(buff.encode(), object_addr) 
             data, (addr, port) = s.recvfrom(1024)
             time_diff = time.time() - start_time
-            log_str = "%d bytess"%len(data.decode()) +" from %s: %d "%(addr,port) \
-                        + "seq_num=%d "%count + "time=%0.4f"%(time_diff * 1000) + "ms"
-            print(log_str)
-            count += 1
+            
 
+            time_line = time.time() - last_second
+            if (time_line > opts.interval and int(time_line * 1000) % 1000 == 0):
+                log_str = "%d bytess"%len(data.decode()) +" from %s: %d "%(addr,port) \
+                    + "seq_num=%d "%count + "time=%0.4f"%(time_diff * 1000) + "ms"                
+                print(log_str)
+                last_second -= opts.interval
+                count += 1
             # print("object said:" + data.decode('utf-8'))
     #             print( my_addr_str + ' : ' + msg)
         else:
