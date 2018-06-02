@@ -1,3 +1,6 @@
+## $ sudo python2 ping_agent.py --send T --address 10.20.196.205 --ping T --port1 80 --port0 80 -p 1234
+
+
 import socket
 import time
 import argparse
